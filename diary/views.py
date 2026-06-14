@@ -51,7 +51,9 @@ class EntryUpdateView(EntryOwnerMixin, UpdateView):
     template_name = 'diary/entry_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('diary:entry_detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy(
+            'diary:entry_detail', kwargs={'pk': self.object.pk}
+        )
 
     def form_valid(self, form):
         messages.success(self.request, 'Запись обновлена! ✅')
