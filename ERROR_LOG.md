@@ -64,9 +64,56 @@ python manage.py migrate
 
 ---
 
+---
+
+### 6. PostgreSQL: role "diary_user" does not exist
+
+**Ошибка:** `FATAL: role "diary_user" does not exist` при `runserver`
+
+**Причина:** В `.env` указан порт 5434, пользователь `diary_user` и БД `diary_db`, но они не были созданы в PostgreSQL.
+
+**Решение:** Созданы через psql:
+```bash
+psql -h localhost -p 5434 -U postgres -c "CREATE ROLE diary_user WITH LOGIN PASSWORD 'diary_password';"
+psql -h localhost -p 5434 -U postgres -c "CREATE DATABASE diary_db OWNER diary_user;"
+```
+
+---
+
+### 7. Docker build failed: [tool.poetry] section not found
+
+**Ошибка:** `[tool.poetry] section not found in /app/pyproject.toml`
+
+**Причина:** В Dockerfile указан `poetry==1.7.1`, который не поддерживает PEP 621 формат `[project]` в pyproject.toml. Современный pyproject.toml использует секцию `[project]` вместо `[tool.poetry]`.
+
+**Решение:** Обновлён Dockerfile: `poetry==1.7.1` → `"poetry>=2.0.0"`
+
+---
+
+### 8. Docker warning: "ew2" variable is not set
+
+**Ошибка:** `WARN[0000] The "ew2" variable is not set. Defaulting to a blank string.`
+
+**Причина:** В SECRET_KEY был символ `$` (`hpw$ew2!...`), который Docker Compose интерпретирует как подстановку переменной окружения.
+
+**Решение:** Сгенерирован новый SECRET_KEY из alphanumeric символов (без `$`).
+
+---
+
+### 9. docker-compose.yml: version is obsolete
+
+**Ошибка:** `WARN[0000] ... the attribute 'version' is obsolete, it will be ignored`
+
+**Причина:** `version: '3.9'` в docker-compose.yml устарел в современных версиях Docker Compose.
+
+**Решение:** Удалена строка `version: '3.9'`.
+
+---
+
 ### Результат
 
 - ✅ 33/33 тестов пройдено
 - ✅ Покрытие кода: 99%
 - ✅ flake8 — без ошибок
 - ✅ 8 атомарных коммитов
+- ✅ PostgreSQL работает на порту 5434
