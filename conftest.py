@@ -1,12 +1,16 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
+
+from diary.models import Entry
 
 User = get_user_model()
 
 
 @pytest.fixture
-def user(db):
-    return User.objects.create_user(
+def user(db) -> AbstractUser:
+    _ = db
+    return User.objects.create_user(  # type: ignore[attr-defined]
         username='testuser',
         email='test@example.com',
         password='testpass123'
@@ -14,8 +18,9 @@ def user(db):
 
 
 @pytest.fixture
-def another_user(db):
-    return User.objects.create_user(
+def another_user(db) -> AbstractUser:
+    _ = db
+    return User.objects.create_user(  # type: ignore[attr-defined]
         username='anotheruser',
         email='another@example.com',
         password='testpass123'
@@ -29,8 +34,8 @@ def authenticated_client(client, user):
 
 
 @pytest.fixture
-def entry(db, user):
-    from diary.models import Entry
+def entry(db, user) -> Entry:
+    _ = db
     return Entry.objects.create(
         author=user,
         title='Тестовая запись',

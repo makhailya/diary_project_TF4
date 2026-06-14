@@ -110,10 +110,33 @@ psql -h localhost -p 5434 -U postgres -c "CREATE DATABASE diary_db OWNER diary_u
 
 ---
 
+---
+
+### 10. PyCharm type checker warnings в шаблонах и views
+
+**Ошибки:**
+- `Cannot resolve file ''{'% url ...'}'` — PyCharm не резолвит Django URL namespaces
+- `Missed locally stored library for HTTP link` — Bootstrap через CDN
+- `Expected type '(...) -> Any | str | SupportsGetAbsoluteUrl', got '_StrPromise'` — `reverse_lazy` возвращает `_StrPromise`
+- `Parameter 'db' value is not used` — стандартный паттерн pytest-django
+- `Member 'None' of '...' does not have attribute '__add__'` — `UserAdmin.fieldsets` может быть `None`
+- `Method 'post' may be 'static'` — `LogoutView.post` не использует `self`
+- `Unresolved attribute reference 'id' / 'username' / 'create_user'` — проблемы резолвинга типов Django
+
+**Решение:**
+- `success_url = reverse_lazy(...)` заменён на `get_success_url()` для чистой типизации
+- `(UserAdmin.fieldsets or ())` — защита от `None`
+- `@staticmethod` для `LogoutView.post`
+- `author: AbstractUser = self.author` — явная аннотация в `__str__`
+- `user: AbstractUser = form.save()` и `current_user: AbstractUser = user` — для `.username`
+- `_ = db` — обозначение осознанно неиспользуемого параметра
+- `# type: ignore[attr-defined]` для `create_user`
+- `entry: Entry` аннотация в тесте
+
 ### Результат
 
 - ✅ 33/33 тестов пройдено
 - ✅ Покрытие кода: 99%
 - ✅ flake8 — без ошибок
-- ✅ 8 атомарных коммитов
+- ✅ Все PyCharm type checker warnings устранены
 - ✅ PostgreSQL работает на порту 5434

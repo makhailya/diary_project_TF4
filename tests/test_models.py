@@ -19,7 +19,7 @@ class TestEntryModel:
     def test_entry_has_updated_at(self, entry):
         assert entry.updated_at is not None
 
-    def test_entry_default_mood(self, user, db):
+    def test_entry_default_mood(self, user):
         entry = Entry.objects.create(
             author=user,
             title='Запись без настроения',
@@ -34,7 +34,7 @@ class TestEntryModel:
         entry.mood = 'terrible'
         assert entry.get_mood_display_emoji() == '😢'
 
-    def test_entries_ordered_by_newest_first(self, user, db):
+    def test_entries_ordered_by_newest_first(self, user):
         entry1 = Entry.objects.create(author=user, title='Первая', content='...')
         entry2 = Entry.objects.create(author=user, title='Вторая', content='...')
         entries = Entry.objects.filter(author=user)
@@ -44,8 +44,8 @@ class TestEntryModel:
     def test_entry_belongs_to_user(self, entry, user):
         assert entry.author == user
 
-    def test_entry_deleted_when_user_deleted(self, user, db):
-        entry = Entry.objects.create(author=user, title='Запись', content='...')
+    def test_entry_deleted_when_user_deleted(self, user):
+        entry: Entry = Entry.objects.create(author=user, title='Запись', content='...')
         entry_id = entry.id
         user.delete()
         assert not Entry.objects.filter(id=entry_id).exists()

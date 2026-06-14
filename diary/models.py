@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 
 class Entry(models.Model):
@@ -50,7 +51,8 @@ class Entry(models.Model):
         verbose_name_plural = 'Записи'
 
     def __str__(self):
-        return f'{self.title} — {self.author.username}'
+        author: AbstractUser = self.author
+        return f'{self.title} — {author.username}'
 
     def get_mood_display_emoji(self):
         mood_map = {

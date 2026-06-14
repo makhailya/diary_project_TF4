@@ -12,7 +12,7 @@ class TestRegistration:
         response = client.get(url)
         assert response.status_code == 200
 
-    def test_register_with_valid_data(self, client, db):
+    def test_register_with_valid_data(self, client):
         url = reverse('users:register')
         data = {
             'username': 'newuser',
@@ -25,7 +25,7 @@ class TestRegistration:
         assert response.status_code == 302
         assert User.objects.filter(username='newuser').exists()
 
-    def test_register_with_mismatched_passwords(self, client, db):
+    def test_register_with_mismatched_passwords(self, client):
         url = reverse('users:register')
         data = {
             'username': 'newuser',

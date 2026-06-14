@@ -5,7 +5,7 @@ from .models import CustomUser
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    fieldsets = UserAdmin.fieldsets + (
+    fieldsets = (UserAdmin.fieldsets or ()) + (
         ('Дополнительно', {
             'fields': ('bio', 'avatar')
         }),

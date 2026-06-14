@@ -12,7 +12,7 @@ class TestEntryListView:
         assert '/users/login/' in response.url
 
     def test_list_shows_only_own_entries(
-        self, authenticated_client, entry, another_user, db
+        self, authenticated_client, entry, another_user
     ):
         other_entry = Entry.objects.create(
             author=another_user,
