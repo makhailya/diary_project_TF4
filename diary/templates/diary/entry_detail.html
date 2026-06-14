@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ entry.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h2>{{ entry.get_mood_display_emoji }} {{ entry.title }}</h2>
+                    <span class="badge bg-secondary">
+                        {{ entry.get_mood_display }}
+                    </span>
+                </div>
+
+                <div class="text-muted small mb-4">
+                    <span>📅 Создано: {{ entry.created_at|date:"d.m.Y в H:i" }}</span>
+                    {% if entry.updated_at != entry.created_at %}
+                        <span class="ms-3">
+                            ✏️ Изменено: {{ entry.updated_at|date:"d.m.Y в H:i" }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <hr>
+
+                <div class="entry-content">
+                    {{ entry.content|linebreaks }}
+                </div>
+
+                <hr>
+
+                <div class="d-flex gap-2">
+                    <a href="{% url 'diary:entry_list' %}" class="btn btn-outline-secondary">
+                        ← Назад
+                    </a>
+                    <a href="{% url 'diary:entry_update' entry.pk %}" class="btn btn-outline-primary">
+                        ✏️ Редактировать
+                    </a>
+                    <a href="{% url 'diary:entry_delete' entry.pk %}" class="btn btn-outline-danger">
+                        🗑️ Удалить
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

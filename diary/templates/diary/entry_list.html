@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Мой дневник{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📔 Мои записи</h2>
+    <a href="{% url 'diary:entry_create' %}" class="btn btn-primary">
+        + Новая запись
+    </a>
+</div>
+
+{% if entries %}
+    {% for entry in entries %}
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-title">
+                    {{ entry.get_mood_display_emoji }} {{ entry.title }}
+                </h5>
+                <small class="text-muted">
+                    {{ entry.created_at|date:"d.m.Y H:i" }}
+                </small>
+            </div>
+
+            <p class="card-text text-muted">
+                {{ entry.content|truncatewords:30 }}
+            </p>
+
+            <div class="d-flex gap-2">
+                <a href="{% url 'diary:entry_detail' entry.pk %}"
+                   class="btn btn-outline-primary btn-sm">
+                    Читать
+                </a>
+                <a href="{% url 'diary:entry_update' entry.pk %}"
+                   class="btn btn-outline-secondary btn-sm">
+                    Изменить
+                </a>
+                <a href="{% url 'diary:entry_delete' entry.pk %}"
+                   class="btn btn-outline-danger btn-sm">
+                    Удалить
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">←</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">→</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+{% else %}
+    <div class="text-center py-5">
+        <h4 class="text-muted">Пока нет ни одной записи</h4>
+        <p class="text-muted">Начни вести дневник прямо сейчас!</p>
+        <a href="{% url 'diary:entry_create' %}" class="btn btn-primary">
+            Создать первую запись
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
