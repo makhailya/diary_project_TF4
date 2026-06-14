@@ -1,22 +1,13 @@
-import sys
 from pathlib import Path
-
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(BASE_DIR))
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'test_db.sqlite3',
-    }
-}
+SECRET_KEY = config('SECRET_KEY')
 
-SECRET_KEY = config('SECRET_KEY', default='test-secret-key')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,6 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'diary',
     'users',
 ]
@@ -40,8 +32,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
-WSGI_APPLICATION = 'config.wsgi.application'
-AUTH_USER_MODEL = 'users.CustomUser'
 
 TEMPLATES = [
     {
@@ -59,8 +49,41 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'config.wsgi.application'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
+    }
+}
+
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
+
+LANGUAGE_CODE = 'ru-ru'
+TIME_ZONE = 'Europe/Moscow'
+USE_I18N = True
+USE_TZ = True
+
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
