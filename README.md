@@ -54,12 +54,20 @@ cp .env.example .env
 poetry install
 ```
 
-4. Примени миграции:
+4. Убедись, что PostgreSQL запущен (роль `diary_user`, БД `diary_db`, порт `5434`):
+
+```bash
+# Если БД ещё не создана:
+psql -p 5434 -c "CREATE ROLE diary_user WITH LOGIN PASSWORD 'diary_password';"
+psql -p 5434 -c "CREATE DATABASE diary_db OWNER diary_user;"
+```
+
+5. Примени миграции:
 ```bash
 poetry run python manage.py migrate
 ```
 
-5. Запусти сервер:
+6. Запусти сервер:
 ```bash
 poetry run python manage.py runserver
 ```
@@ -69,6 +77,8 @@ poetry run python manage.py runserver
 ```bash
 docker compose up --build
 ```
+
+> **Для Docker Compose v1:** `docker-compose up --build`
 
 ### Создание суперпользователя
 
@@ -85,25 +95,39 @@ poetry run pytest --cov=diary --cov=users --cov-report=term-missing
 ## 📁 Структура проекта
 
 ```
-diary_project/
-├── config/           # Настройки Django
+diary_project_TF4/
+├── config/              # Настройки Django
 │   ├── settings.py
+│   ├── settings_test.py # Настройки для тестов (SQLite)
 │   ├── urls.py
 │   └── wsgi.py
-├── diary/            # Приложение дневника
-│   ├── models.py
-│   ├── views.py
+├── diary/               # Приложение дневника
+│   ├── admin.py
 │   ├── forms.py
-│   ├── mixins.py
+│   ├── mixins.py        # EntryOwnerMixin
+│   ├── models.py
+│   ├── urls.py
+│   ├── views.py
 │   └── templates/diary/
-├── users/            # Авторизация
-│   ├── models.py
-│   ├── views.py
+├── users/               # Приложение авторизации
+│   ├── admin.py
 │   ├── forms.py
+│   ├── models.py        # CustomUser
+│   ├── urls.py
+│   ├── views.py
 │   └── templates/users/
-├── templates/        # Общие шаблоны
+├── templates/           # Общие шаблоны
 │   └── base.html
-├── tests/            # Тесты (99% coverage)
+├── tests/               # Тесты (99% coverage)
+│   ├── test_auth.py
+│   ├── test_forms.py
+│   ├── test_models.py
+│   └── test_views.py
+├── manage.py            # Точка входа Django
+├── conftest.py          # Фикстуры pytest
+├── pytest.ini           # Настройки pytest
+├── .env.example         # Пример переменных окружения
+├── ERROR_LOG.md         # История ошибок при сборке
 ├── Dockerfile
 ├── docker-compose.yml
 └── pyproject.toml
